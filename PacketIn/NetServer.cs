@@ -15,11 +15,11 @@ namespace PacketIn
             Links = new List<NetLink>();
         }
 
-        public void Broadcast<T>(T data) where T : NetSnapshot
+        public void Broadcast<T>(T data) where T : NetContent<T>
         {
             Broadcast("-", data);
         }
-        public void Broadcast<T>(string channel, T data) where T : NetSnapshot
+        public void Broadcast<T>(string channel, T data) where T : NetContent<T>
         {
             foreach (var l in Links)
             {

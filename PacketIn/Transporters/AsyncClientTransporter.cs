@@ -36,7 +36,11 @@ namespace PacketIn.Transporters
         }
         public override void Enable()
         {
-            _socket.Connect(_host, _port);
+            _socket.BeginConnect(_host, _port, (iar) =>
+            {
+                _socket.EndConnect(iar);
+                Connected(_socket);
+            }, _socket);
         }
 
         public override void Disable()

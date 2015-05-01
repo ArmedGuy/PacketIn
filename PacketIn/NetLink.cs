@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace PacketIn
 {
@@ -13,11 +12,14 @@ namespace PacketIn
         internal NetTransporter Transporter;
         internal List<NetChannel> NetChannels;
 
+        public NetChannel DefaultChannel { get; private set; }
+
         public NetLink(NetTransporter transporter)
         {
             Transporter = transporter;
             NetChannels = new List<NetChannel>();
-            AddChannel(new NetChannel("-"));
+            DefaultChannel = new NetChannel("-");
+            AddChannel(DefaultChannel);
 
             Transporter.OnReceive += Transporter_OnReceive;
         }
@@ -33,7 +35,19 @@ namespace PacketIn
                     c.Messaged(sender, data);
                 }
             }
+
+            Transporter.Receive();
             return true;
+        }
+
+        public void Enable()
+        {
+            Transporter.Receive();
+        }
+
+        public void Disable()
+        {
+            Transporter.Disable();
         }
 
         public void AddChannel(NetChannel chan)
@@ -42,12 +56,12 @@ namespace PacketIn
             chan.Link = this;
         }
 
-        public void Send<T>(T data) where T : NetSnapshot
+        public void Send<T>(T data) where T : NetContent<T>
         {
             Send("-", data);
         }
 
-        public void Send<T>(string channel, T data) where T : NetSnapshot
+        public void Send<T>(string channel, T data) where T : NetContent<T>
         {
             var chanId = channel.GetHashCode();
             foreach (var chan in NetChannels.Where(x => x.Id == chanId))

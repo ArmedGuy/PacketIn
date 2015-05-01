@@ -18,9 +18,9 @@ namespace PacketIn
         internal void Messaged(object sender, byte[] data)
         {
             if (OnMessage == null) return;
-            foreach(var d in (NetRecevier[])OnMessage.GetInvocationList())
+            foreach(var d in OnMessage.GetInvocationList())
             {
-                if (d.Invoke(sender, data))
+                if (((NetRecevier)d).Invoke(sender, data))
                     break;
             }
         }
@@ -32,12 +32,13 @@ namespace PacketIn
             SendBuffer = new MemoryStream();
         }
 
-        public void Send<T>(T data) where T : NetSnapshot
+        public void Send<T>(T data) where T : NetContent<T>
         {
-            using (var writer = new BinaryWriter(SendBuffer))
+            var writer = new BinaryWriter(SendBuffer);
             {
                 writer.Write(Id);
                 writer.Write(typeof (T).Name.GetHashCode());
+                writer.Write(data.ContentId);
                 var raw = NetEngine.Pack(data);
                 writer.Write(raw.Length);
                 writer.Write(raw);

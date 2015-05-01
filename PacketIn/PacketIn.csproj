@@ -43,12 +43,13 @@
     <Compile Include="NetEngine.cs" />
     <Compile Include="ExamplePlayer.cs" />
     <Compile Include="NetServer.cs" />
-    <Compile Include="NetSnapshot.cs" />
+    <Compile Include="NetContent.cs" />
     <Compile Include="NetChannel.cs" />
     <Compile Include="NetLink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SnapshotDataAttribute.cs" />
+    <Compile Include="NetDataAttribute.cs" />
     <Compile Include="Transporters\AsyncClientTransporter.cs" />
+    <Compile Include="Transporters\ManualTransporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

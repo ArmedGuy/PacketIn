@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace PacketIn
 {
-    public class SnapshotDataAttribute : Attribute
+    public class NetDataAttribute : Attribute
     {
         public int Index { get; set; }
 
-        public SnapshotDataAttribute(int index)
+        public NetDataAttribute(int index)
         {
             Index = index;
         }
