@@ -19,12 +19,13 @@ namespace PacketIn.Transporters
         {
         }
 
-        public override void Send(byte[] data)
+        public override void SendAsync(byte[] data)
         {
             Buffer.Enqueue(data);
+            Sent(this, data.Length);
         }
 
-        public override void Receive()
+        public override void ReceiveAsync()
         {
             (new Thread(() =>
             {

@@ -35,14 +35,12 @@ namespace PacketIn
                     c.Messaged(sender, data);
                 }
             }
-
-            Transporter.Receive();
             return true;
         }
 
         public void Enable()
         {
-            Transporter.Receive();
+            Transporter.Enable();
         }
 
         public void Disable()

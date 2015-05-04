@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 namespace PacketIn
 {
     /// <summary>
-    /// Abstract Transporter class with an asyncronous design.
+    /// Abstract Transporter class with an asyncronous send/recv design.
+    /// Connection and disconnection is syncronous.
     /// 
     /// Receving is done by calling Receive(), then listening on the OnReceive event.
+    /// 
+    /// Receive() should trigger one and ONLY one OnReceive-event per call.
+    /// Class can be made Syncronous using locks.
     /// </summary>
     public abstract class NetTransporter
     {
         public abstract void Enable();
         public abstract void Disable();
 
-        public abstract void Send(byte[] data);
-        public abstract void Receive();
+        public abstract void SendAsync(byte[] data);
+        public abstract void ReceiveAsync();
 
         public event NetRecevier OnReceive;
         public void Received(object sender, byte[] data)
@@ -27,11 +31,11 @@ namespace PacketIn
                 OnReceive(sender, data);
         }
 
-        public event Action<object> OnConnected;
-        public void Connected(object sender)
+        public event Action<object, int> OnSent;
+        public void Sent(object sender, int numBytes)
         {
-            if (OnConnected != null)
-                OnConnected(sender);
+            if (OnSent != null)
+                OnSent(sender, numBytes);
         }
     }
 }

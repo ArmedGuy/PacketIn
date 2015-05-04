@@ -36,11 +36,7 @@ namespace PacketIn.Transporters
         }
         public override void Enable()
         {
-            _socket.BeginConnect(_host, _port, (iar) =>
-            {
-                _socket.EndConnect(iar);
-                Connected(_socket);
-            }, _socket);
+            _socket.Connect(_host, _port);
         }
 
         public override void Disable()
@@ -48,15 +44,16 @@ namespace PacketIn.Transporters
             _socket.Close();
         }
 
-        public override void Send(byte[] data)
+        public override void SendAsync(byte[] data)
         {
             _socket.BeginSend(data, 0, data.Length, SocketFlags.None, (iar) =>
             {
-                _socket.EndSend(iar);
+                var num = _socket.EndSend(iar);
+                Sent(_socket, num);
             }, _socket);
         }
 
-        public override void Receive()
+        public override void ReceiveAsync()
         {
             var state = new ReceiveState();
             _socket.BeginReceive(state.Buffer, 0, ReceiveState.BufferSize, SocketFlags.None, ReceiveCallback, state);
