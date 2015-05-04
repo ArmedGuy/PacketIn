@@ -63,7 +63,7 @@ namespace PacketIn
 
         public void Send<T>(string channel, T data) where T : NetContent<T>
         {
-            var chanId = channel.GetHashCode();
+            var chanId = NetEngine.GetHash(channel);
             foreach (var chan in NetChannels.Where(x => x.Id == chanId))
             {
                 chan.Send(data);

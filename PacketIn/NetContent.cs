@@ -27,7 +27,7 @@ namespace PacketIn
                         ((NetDataAttribute)
                             Attribute.GetCustomAttribute(x, typeof(NetDataAttribute))).Index);
 
-            ContentTypeId = typeof(T).Name.GetHashCode();
+            ContentTypeId = NetEngine.GetHash(typeof (T).Name);
         }
 
         /// <summary>

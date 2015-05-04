@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PacketIn
 {
@@ -24,6 +18,8 @@ namespace PacketIn
     {
         internal static Dictionary<Type, NetPacker> Packers = new Dictionary<Type, NetPacker>(); 
         internal static Dictionary<Type, NetUnpacker> Unpackers = new Dictionary<Type, NetUnpacker>();
+
+        internal static MD5 HashGeneratorMd5;
 
         /// <summary>
         /// Define a Packer function for type T.
@@ -108,6 +104,9 @@ namespace PacketIn
             UnpackerFor<ulong>(reader => reader.ReadUInt64());
             UnpackerFor<ushort>(reader => reader.ReadUInt16());
             #endregion
+
+            HashGeneratorMd5 = MD5.Create();
+            HashGeneratorMd5.Initialize();
         }
 
         /// <summary>
@@ -160,6 +159,18 @@ namespace PacketIn
                     throw new Exception("No Unpacker exists for specified type.");
                 }
             }
+        }
+
+        /// <summary>
+        /// Hashes a string to a 32 bit integer, used for identification of NetChannels and ContentTypes.
+        /// </summary>
+        /// <param name="id">String ID</param>
+        /// <returns>Hashed Integer ID</returns>
+        public static int GetHash(string id)
+        {
+            var b = Encoding.UTF8.GetBytes(id);
+            var output = HashGeneratorMd5.ComputeHash(b);
+            return BitConverter.ToInt32(output, 0);
         }
     }
 }

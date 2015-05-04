@@ -28,7 +28,7 @@ namespace PacketIn
         public int Id { get; internal set; }
         public NetChannel(string name)
         {
-            Id = name.GetHashCode();
+            Id = NetEngine.GetHash(name);
             SendBuffer = new MemoryStream();
         }
 
@@ -37,7 +37,7 @@ namespace PacketIn
             var writer = new BinaryWriter(SendBuffer);
             {
                 writer.Write(Id);
-                writer.Write(typeof (T).Name.GetHashCode());
+                writer.Write(NetContent<T>.ContentTypeId);
                 writer.Write(data.ContentId);
                 var raw = NetEngine.Pack(data);
                 writer.Write(raw.Length);
